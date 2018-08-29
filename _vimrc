@@ -98,7 +98,7 @@ Plug 'python-mode/python-mode', { 'for': 'python' }
 " for perl
 Plug 'vim-perl/vim-perl', { 'for': 'perl'}
 
-" Plug 'skywind3000/asyncrun.vim',
+Plug 'skywind3000/asyncrun.vim',
 
 " for Markdown
 Plug 'godlygeek/tabular', { 'for': 'markdown' }
@@ -199,8 +199,11 @@ set smartcase
 "" Directories for swp files
 " set nobackup
 " set noswapfile
-
-set fileformats=unix,dos,mac
+if has("win32")
+  set fileformats=dos,unix,mac
+else
+  set fileformats=unix,dos,mac
+endif
 
 " disable automatic comment insertion
 "  http://http://vim.wikia.com/wiki/Disable_automatic_comment_insertion
@@ -939,9 +942,17 @@ let g:airline#extensions#tabline#enabled = 1
 " let g:python3_host_prog = 'D:/Program Files/Python36/Python.exe'
 " let g:deoplete#enable_at_startup = 1
 " }}}
+" AsyncRun {{{
+augroup vimrc
+    autocmd QuickFixCmdPost * botright copen 8
+augroup END
+let g:asyncrun_encs='gbk'
+" noremap <F4> :call asyncrun#quickfix_toggle(8, 0)<cr>
+" }}}
+
 
 "*****************************************************************************
 "" Convenience variables
 "*****************************************************************************
 
-" vim:ft=vim:et:ts=2:sw=2
+" vim:set ft=vim ts=2 sw=2:
