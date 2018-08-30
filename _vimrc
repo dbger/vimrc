@@ -197,10 +197,13 @@ set ignorecase
 set smartcase
 
 "" Directories for swp files
-" set nobackup
-" set noswapfile
+set nobackup
+set noswapfile
+
 if has("win32")
   set fileformats=dos,unix,mac
+elseif has("gui_mac") || has("gui_macvim")
+  set fileformats=mac,unix,dos
 else
   set fileformats=unix,dos,mac
 endif
