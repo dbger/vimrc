@@ -82,6 +82,8 @@ Plug 'jlanzarotta/bufexplorer'
 Plug 'Valloric/YouCompleteMe'
 Plug 'w0rp/ale'
 
+Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
+
 " if has('nvim')
     " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " else
@@ -476,8 +478,8 @@ au FileType json nmap <C-F5> :w<CR>:%!python -m json.tool<CR>
 " https://gist.github.com/juanpabloaj/5845848
 
 " open quickfix window at onece
-" autocmd QuickFixCmdPost [^l]* nested cwindow
-" autocmd QuickFixCmdPost    l* nested lwindow
+autocmd QuickFixCmdPost [^l]* nested cwindow
+autocmd QuickFixCmdPost    l* nested lwindow
 "*****************************************************************************
 "" Functions
 "*****************************************************************************
@@ -696,9 +698,11 @@ let g:pymode_lint_signs=0
 " }}}
 
 " ale {{{
+" let g:ale_javascript_prettier_options = '--single-quote --trailing-comma es5'
+let g:ale_fix_on_save = 1
 let g:ale_sign_column_always = 1
 let g:ale_set_highlights = 0
-let g:ale_sign_error = '✔'
+let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '⚡'
 let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
 let g:ale_echo_msg_error_str = 'E'
@@ -711,7 +715,9 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 let g:ale_fixers = { 
     \ 'python': ['yapf', 'autopep8'],
+    \ 'javascript': ['prettier', 'eslint'], 
     \ }
+
 nmap sp <Plug>(ale_previous_wrap)
 nmap sn <Plug>(ale_next_wrap)
 nmap <Leader>s :ALEToggle<CR>
