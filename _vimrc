@@ -716,7 +716,9 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_fixers = { 
     \ 'python': ['yapf', 'autopep8'],
     \ 'javascript': ['prettier', 'eslint'], 
+    \ 'sql': ['sqlfmt'],
     \ }
+let g:ale_sql_sqlfmt_options = '-u'
 
 nmap sp <Plug>(ale_previous_wrap)
 nmap sn <Plug>(ale_next_wrap)
@@ -884,7 +886,7 @@ let g:go_fmt_fail_silently = 1
 let g:go_addtags_transform = 'camelcase'
 let g:go_info_mode = 'gocode'
 let g:go_term_enabled = 1
-let $http_proxy='127.0.0.1:9527'
+" let $http_proxy='127.0.0.1:9527'
 
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
