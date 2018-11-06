@@ -54,7 +54,10 @@ Plug 'tpope/vim-speeddating', { 'for': 'org' }
 Plug 'jceb/vim-orgmode', { 'for': 'org' }
 
 " Multiple Plug commands can be written in a single line using | separators
-Plug 'tpope/vim-surround' | Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-surround' |  Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-fugitive' 
+
+Plug 'airblade/vim-gitgutter'
 
 Plug 'easymotion/vim-easymotion'
 Plug 'terryma/vim-multiple-cursors'
@@ -80,6 +83,10 @@ Plug 'jlanzarotta/bufexplorer'
 
 "
 Plug 'Valloric/YouCompleteMe'
+
+" Enable completion where available.
+" This setting must be set before ALE is loaded
+" let g:ale_completion_enabled = 1
 Plug 'w0rp/ale'
 
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
@@ -95,7 +102,7 @@ Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 
 " for python
 Plug 'davidhalter/jedi-vim', { 'for': 'python' }
-Plug 'python-mode/python-mode', { 'for': 'python' }
+" Plug 'python-mode/python-mode', { 'for': 'python' }
 
 " for perl
 Plug 'vim-perl/vim-perl', { 'for': 'perl'}
@@ -128,7 +135,7 @@ Plug 'luochen1990/rainbow'
 "
 
 Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets', { 'for': ['go', 'rust', 'python'] }
+Plug 'honza/vim-snippets'
 
 " for rust
 " Plug 'racer-rust/vim-racer', { 'for' : 'rust' }
@@ -620,10 +627,10 @@ let g:rainbow_active=1
 " }}}
 
 "  completor {{{
-" let g:completor_node_binary = $HOME. '/.cargo/bin/racer.exe'
+" let g:completor_racer_binary = $HOME. '/.cargo/bin/racer.exe'
 " let $RUST_SRC_PATH = $HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-msvc/lib/rustlib/src/rust/src'
 " let g:completor_gocode_binary = $HOME. '/go/bin/gocode.exe'
-"
+
 "  }}}
 
 " vim-solarized8 {{{
@@ -699,7 +706,7 @@ let g:pymode_lint_signs=0
 
 " ale {{{
 " let g:ale_javascript_prettier_options = '--single-quote --trailing-comma es5'
-let g:ale_fix_on_save = 1
+let g:ale_fix_on_save = 0
 let g:ale_sign_column_always = 1
 let g:ale_set_highlights = 0
 let g:ale_sign_error = '✗'
@@ -709,8 +716,9 @@ let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 " let g:ale_linters = {
+    " \ 'rust': ['rls',],
     " \ 'python': ['yapf', 'pylint', 'pycodestyle'],
-    " \ 'rust': ['rustc',],
+    " \ 'go': ['gofmt', 'golint', 'govet', 'golangserver'],
     " \ }
 
 let g:ale_fixers = { 
@@ -718,14 +726,18 @@ let g:ale_fixers = {
     \ 'javascript': ['prettier', 'eslint'], 
     \ 'sql': ['sqlfmt'],
     \ }
-let g:ale_sql_sqlfmt_options = '-u'
+" let g:ale_sql_sqlfmt_options = '-u'
 
 nmap sp <Plug>(ale_previous_wrap)
 nmap sn <Plug>(ale_next_wrap)
 nmap <Leader>s :ALEToggle<CR>
 " nnoremap <Leader>d :ALEDetail<CR>
 nnoremap <Leader>f :ALEFix<CR>
+
+" nnoremap <leader>jd :ALEGoToDefinition<CR>
 let g:ale_rust_cargo_check_all_targets = 1
+
+let g:ale_rust_rls_toolchain= 'stable'
 " }}}
 
 "" supertab {{{
@@ -736,6 +748,8 @@ let g:ale_rust_cargo_check_all_targets = 1
 " let g:SuperTabLongestHighlight = 1
 " }}}
 
+" fix https://github.com/davidhalter/jedi-vim/issues/870
+py3 import os; sys.executable=os.path.join(sys.prefix, 'python.exe')
 " jedi {{{
 let g:jedi#popup_on_dot=0
 let g:jedi#auto_initialization=1
@@ -815,6 +829,8 @@ let g:slimv_clhs_root='file:///d:/Program\%20Files/Vim/vimfiles/HyperSpec-7-0/Hy
 let g:vim_markdown_folding_disabled=1
 " don't conceal when edit link at insert mode
 let g:indentLine_concealcursor = 'nc'
+" close conceal
+let g:vim_markdown_conceal = 0
 "  }}}
 
 "  markdown-preview {{{
@@ -886,7 +902,7 @@ let g:go_fmt_fail_silently = 1
 let g:go_addtags_transform = 'camelcase'
 let g:go_info_mode = 'gocode'
 let g:go_term_enabled = 1
-" let $http_proxy='127.0.0.1:9527'
+let $http_proxy='127.0.0.1:9527'
 
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
@@ -914,6 +930,12 @@ let g:Lf_ShortcutF = '<C-P>'
 " let g:UltiSnipsJumpForwardTrigger='<c-b>'
 " let g:UltiSnipsJumpBackwardTrigger='<c-z>'
 let g:UltiSnipsEditSplit='vertical'
+" }}}
+
+" vim-snippets {{{
+let g:snips_author = 'dbger'
+let g:snips_email = 'dbger At live.com'
+let g:snips_github = 'https://github.com/dbger'
 " }}}
 
 " auto-pair {{{
