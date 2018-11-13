@@ -1,4 +1,5 @@
 " vim-bootstrap
+\minigrep
 
 "*****************************************************************************
 "" Vim-PLug core
@@ -130,9 +131,9 @@ Plug 'mbra/prettysql', { 'for' : 'sql' }
 Plug 'fatih/vim-go' |", { 'for': 'go' }
 
 Plug 'luochen1990/rainbow'
+
 " Plug 'prabirshrestha/asyncomplete.vim'
 " Plug 'prabirshrestha/asyncomplete-gocode.vim'
-"
 
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
@@ -330,6 +331,10 @@ set laststatus=2
 set modeline
 set modelines=10
 
+" We need this for plugins like Syntastic and vim-gitgutter which put symbols
+" in the sign column.
+hi clear SignColumn
+
 set title
 set titleold="Terminal"
 set titlestring=%F
@@ -446,24 +451,25 @@ map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
 map <M-F5> :%s/\(;\s\?\\|&\)/\r/g<CR>
 
-" au FileType python iabbrev <buffer> iff if:<left>
+" python keymap
 " au FileType python imap <C-F5> <esc>:w<CR> :vert :term python %<CR>
 " au FileType python nmap <C-F5> :w<CR> :vert :term python %<CR>
 
 au FileType python inoremap <C-F5> <esc>:w<CR>:botright term python %<CR>
-au FileType python nmap <c-F5> :w<CR>:botright term python %<CR>
+au FileType python nmap <C-F5> :w<CR>:botright term python %<CR>
 
+" perl keymap
 au FileType perl imap <C-F5> <esc>:w<CR>:!perl %<CR>
 au FileType perl nmap <C-F5> <esc>:w<CR>:!perl %<CR>
+
 " lua keymap
 au FileType lua imap <C-F5> <esc>:w<CR>:!lua %<CR>
 au FileType lua nmap <C-F5> :w<CR>:!lua %<CR>
 
 "  rust keymap
-au FileType rust imap <F5> <esc>:w<CR>:call RunIt(1)<CR>
-au FileType rust nmap <F5> :w<CR>:call RunIt(1)<CR>
-au FileType rust imap <C-F5> <esc>:w<CR>:call RunIt(0)<CR>
-au FileType rust nmap <C-F5> :w<CR>:call RunIt(0)<CR>
+au FileType rust imap <C-F5> <esc><CR>:call QuicklyRun()<CR>
+au FileType rust nmap <C-F5> :call QuicklyRun()<CR>
+command! -nargs=* CargoDebug call QuicklyDebug(<q-args>)
 
 " json
 au FileType json nmap <C-F5> :w<CR>:%!python -m json.tool<CR>
@@ -498,39 +504,54 @@ if !exists('*s:setupWrapping')
   endfunction
 endif
 
-command! -nargs=* CargoDebug call DebugIt(<q-args>)
-function! DebugIt(args)
-    if !exists(':Termdebug')
-        exec 'packadd termdebug'
+
+" get rust path info
+function! s:getRustProjectInfo()
+  let l:cfg = {}
+  let l:curdir = getcwd() 
+  let token = '/'
+  if has('win32')
+    let token = '\'
+  endif
+  while 1
+    let l:pos = strridx(l:curdir, token)
+    if l:pos == -1
+      break
     endif
-    let l:project_name = expand('%:p:h:h:t')
-    let l:cmd = 'TermdebugCommand ../target/debug/' . l:project_name
-    if len(a:args) > 0
-        let l:cmd = l:cmd . ' ' . a:args
+    if filereadable(l:curdir . '/Cargo.toml') 
+      let l:project_name = strpart(l:curdir, l:pos+1)
+      let l:cfg = {'path':l:curdir, 'name' : l:project_name}
+      break
     endif
-    exec l:cmd 
+    let l:curdir = strpart(l:curdir, 0, l:pos) 
+  endwhile
+
+  return l:cfg
 endfunction
 
-function! RunIt(debug)
-    let l:ext = expand('%:e')
-    let l:cmd = ''
-    if l:ext == 'rs'
-      if a:debug == 1
-          call DebugIt('')
-          return
-      else
-          let l:cmd = ':botright term cargo run'
-      endif
-    elseif l:ext == 'go'
-        if a:debug == 1
-            let l:cmd = ':GoDebugStart ' . expand('%:t')
-        else
-            let l:cmd = ':botright term go run %'
-        endif
+function! QuicklyDebug(args)
+  exec 'w'
+  let l:cmd = ''
+
+  if &filetype == 'rust'
+    let l:cfg = s:getRustProjectInfo()
+    if !empty(l:cfg)
+      let l:cmd = 'lcd ' . l:cfg['path']
+      exec l:cmd
+      let l:cmd = 'NeoDebug --args target/debug/' . l:cfg['name'] 
+    else
+      echom "Not find Cargo.toml"
     endif
-    if l:cmd != ''
-        exec l:cmd
+  elseif &filetype == 'go'
+    let l:cmd = ':GoDebugStart ' . expand('%:t')
+  endif
+
+  if l:cmd != ''
+    if len(a:args) > 0
+      let l:cmd = l:cmd . ' ' . a:args
     endif
+    exec l:cmd
+  endif
 endfunction
 
 """""""""""""""""""""" "Quickly Run """"""""""""""""""""""
@@ -548,15 +569,17 @@ func! QuicklyRun()
     elseif &filetype == 'sh'
         :!time bash %
     elseif &filetype == 'python'
-        exec "!time python %"
+        exec "!python %"
     elseif &filetype == 'html' 
         exec "!firefox % &"
     elseif &filetype == 'go'
         " exec "!go build %<"
-        exec "!time go run %" 
+        exec 'botright term go run %'
     elseif &filetype == 'mkd' 
         exec "!~/.vim/markdown.pl % > %.html &"
         exec "!firefox %.html &" 
+    elseif &filetype == 'rust'
+        exec 'bot term Cargo run %'
     endif
 endfunc
 
