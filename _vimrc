@@ -904,10 +904,10 @@ augroup go
   au FileType go nmap <Leader>i <Plug>(go-info)
   au FileType go nmap <Leader>e <Plug>(go-rename)
   au FileType go nmap <S-F5> :GoDebugStop<CR>
-  au FileType go nmap <A-F5> :w<CR>:call RunIt(1)<CR>
-  au FileType go nmap <C-F5> :w<CR>:call RunIt(0)<CR>
-  au FileType go imap <A-F5> <esc>:w<CR>:call RunIt(1)<CR>
-  au FileType go imap <C-F5> <esc>:w<CR>:call RunIt(0)<CR>
+  au FileType go nmap <A-F5> :call QuicklyDebug('')<CR><CR>
+  au FileType go nmap <C-F5> :call QuicklyRun()<CR>
+  au FileType go imap <A-F5> :call QuicklyDebug('')<CR><CR>
+  au FileType go imap <C-F5> :call QuicklyRun()<CR>
 
   au Filetype go nmap <leader>gt <plug>(go-coverage-toggle)
   au Filetype go nmap <silent> <leader>l <plug>(go-metalinter)
