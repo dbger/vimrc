@@ -469,6 +469,8 @@ au FileType lua nmap <C-F5> :w<CR>:!lua %<CR>
 "  rust keymap
 au FileType rust imap <C-F5> <esc><CR>:call QuicklyRun()<CR>
 au FileType rust nmap <C-F5> :call QuicklyRun()<CR>
+au FileType rust imap <A-F5> <esc><CR>:call QuicklyDebug('')<CR>
+au FileType rust nmap <A-F5> :call QuicklyDebug('')<CR>
 command! -nargs=* CargoDebug call QuicklyDebug(<q-args>)
 
 " json
