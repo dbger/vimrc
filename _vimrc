@@ -1,5 +1,4 @@
 " vim-bootstrap
-\minigrep
 
 "*****************************************************************************
 "" Vim-PLug core
@@ -103,7 +102,7 @@ Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 
 " for python
 Plug 'davidhalter/jedi-vim', { 'for': 'python' }
-" Plug 'python-mode/python-mode', { 'for': 'python' }
+Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
 
 " for perl
 Plug 'vim-perl/vim-perl', { 'for': 'perl'}
@@ -386,7 +385,7 @@ noremap <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
 inoremap jk <esc>
-inoremap kj <esc>
+" inoremap kj <esc>
 
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
