@@ -69,7 +69,8 @@ Plug 'jiangmiao/auto-pairs'
 
 Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 
-Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 " color scheme
 Plug 'lifepillar/vim-solarized8'
@@ -231,7 +232,7 @@ au FileType * setlocal formatoptions-=c formatoptions-=o
 if exists('$SHELL')
   set shell=$SHELL
 else
-  set shell=cmd.exe |" /bin/sh
+  set shell=cmd.exe
 endif
 
 " session management
@@ -669,6 +670,10 @@ else
   colorschem desert
   syntax on
 endif
+
+" vim-airline-themes {{{
+" let g:airline_theme='solarized'
+let g:airline_theme='dark'
 " }}}
 
 " tagbar {{{
