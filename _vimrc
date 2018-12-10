@@ -811,9 +811,9 @@ let g:ycm_seed_identifiers_with_syntax=1
 
 " https://zhuanlan.zhihu.com/p/33046090
 let g:ycm_semantic_triggers =  {
-			\ 'c,cpp,python,go,java,erlang,perl': ['re!\w{2}'],
-			\ 'cs,lua,javascript,rust': ['re!\w{2}'],
-			\ }
+     \ 'c,cpp,python,go,java,erlang,perl': ['re!\w{2}'],
+     \ 'cs,lua,javascript,rust': ['re!\w{2}'],
+     \ }
 
 let g:ycm_rust_src_path=$HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-msvc/lib/rustlib/src/rust/src'
 
@@ -846,7 +846,8 @@ let g:slimv_menu=1
 let g:lisp_rainbow=0
 " let g:paredit_mode=0
 " let g:paredit_electric_return=0
-" let g:slimv_swank_cmd = '!start "D:/Program Files/Steel Bank Common Lisp/1.4.2/sbcl.exe" -l "D:/Program Files/Vim/vimfiles/plugged/slimv/slime/start-swank.lisp" '
+let g:swank_log=0 
+" let g:slimv_swank_cmd = '!start "D:/Program Files/Steel Bank Common Lisp/1.4.14/sbcl.exe" --load "D:/Program Files/Vim/vimfiles/plugged/slimv/slime/start-swank.lisp" '
 let g:slimv_swank_cmd = '!start /MIN "D:/ccl-1.11.5-windowsx86/ccl/wx86cl64.exe" -l "D:/Program Files/Vim/vimfiles/plugged/slimv/slime/start-swank.lisp" '
 let g:slimv_swank_scheme = '!start "C:/Program Files (x86)/MIT-GNU Scheme/bin/mit-scheme.exe" --band "C:\Program Files (x86)\MIT-GNU Scheme\lib\all.com" --library "C:\Program Files (x86)\MIT-GNU Scheme\lib" --load "D:\Program Files\Vim\vimfiles\plugged\slimv\slime\contrib\swank-mit-scheme.scm"'
 let g:slimv_clhs_root='file:///d:/Program\%20Files/Vim/vimfiles/HyperSpec-7-0/HyperSpec/Body/'
@@ -1001,7 +1002,7 @@ let g:airline#extensions#tabline#enabled = 1
 " }}}
 
 " deoplete {{{
-" let g:python3_host_prog = 'D:/Program Files/Python36/Python.exe'
+" let g:python3_host_prog = 'D:/Program Files/Python37/Python.exe'
 " let g:deoplete#enable_at_startup = 1
 " }}}
 " AsyncRun {{{
