@@ -19,7 +19,7 @@ if !filereadable(vimplug_exists)
   endif
   echo "Installing Vim-Plug..."
   echo ""
-  let org_cwd = getcwd() 
+  let s:save_cwd = getcwd() 
   lcd $VIM
   silent !curl -fLo ./vimfiles/plug.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   lcd `=s:save_cwd` " or exec 'lcd ' . s:save_cwd
