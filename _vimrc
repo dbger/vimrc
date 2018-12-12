@@ -24,6 +24,7 @@ if !filereadable(vimplug_exists)
   silent !curl -fLo ./vimfiles/plug.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   lcd `=s:save_cwd` " or exec 'lcd ' . s:save_cwd
   unlet s:save_cwd
+
   let g:not_finish_vimplug = "yes"
 
   autocmd VimEnter * PlugInstall
