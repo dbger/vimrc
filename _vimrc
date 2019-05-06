@@ -7,7 +7,14 @@ if has('vim_starting')
   set nocompatible               " Be iMproved
 endif
 
-let vimplug_exists=expand('$VIM/vimfiles/plug.vim/autoload/plug.vim')
+if has ('win32')
+" windows
+  let $MY_VIMFILES_PATH = $VIM . '/vimfiles'
+else
+  let $MY_VIMFILES_PATH = $HOME. '/.vim'
+endif
+
+let vimplug_exists= expand('$MY_VIMFILES_PATH/plug.vim/autoload/plug.vim')
 
 let g:vim_bootstrap_langs = "c,go,lisp,python,rust"
 let g:vim_bootstrap_editor = "vim"				" nvim or vim
@@ -20,8 +27,9 @@ if !filereadable(vimplug_exists)
   echo "Installing Vim-Plug..."
   echo ""
   let s:save_cwd = getcwd() 
-  lcd $VIM
-  silent !curl -fLo ./vimfiles/plug.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  silent exec '!mkdir '. expand($MY_VIMFILES_PATH)
+  lcd $MY_VIMFILES_PATH
+  silent !curl -fLo ./plug.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   lcd `=s:save_cwd` " or exec 'lcd ' . s:save_cwd
   unlet s:save_cwd
 
@@ -30,15 +38,16 @@ if !filereadable(vimplug_exists)
   autocmd VimEnter * PlugInstall
 endif
 
-set rtp+=$VIM/vimfiles/plug.vim
 if has('nvim')
 let $MYVIMRC=$VIM. '/sysinit.vim'
 endif
+
+set rtp+=$MY_VIMFILES_PATH/plug.vim
 "  Required: {{{
 " Specify a directory for plugins
 " - For Neovim: ~/.local/share/nvim/plugged
 " - Avoid using standard Vim directory names like 'plugin'
-call plug#begin('$VIM/vimfiles/plugged')
+call plug#begin('$MY_VIMFILES_PATH/plugged')
 
 "*****************************************************************************
 "" Plug install packages
@@ -79,8 +88,11 @@ Plug 'vim-airline/vim-airline-themes'
 
 " color scheme
 Plug 'lifepillar/vim-solarized8'
-
-Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' } | Plug 'Yggdroot/indentLine'
+if has('win32')
+  Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' } | Plug 'Yggdroot/indentLine'
+else
+  Plug 'Yggdroot/LeaderF', { 'do': '.\install.sh' } | Plug 'Yggdroot/indentLine'
+endif
 
 " buffer manage 
 Plug 'jlanzarotta/bufexplorer'
@@ -121,7 +133,6 @@ Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'iamcco/mathjax-support-for-mkdp', { 'for': 'markdown' }
 Plug 'iamcco/markdown-preview.vim', { 'for': 'markdown' }
 Plug 'dhruvasagar/vim-table-mode' |", { 'for' : 'markdown' }
-
 
 " for lisp
 Plug 'kovisoft/slimv', { 'for' : ['lisp', 'scheme'] }
@@ -237,8 +248,15 @@ au FileType * setlocal formatoptions-=c formatoptions-=o
 if exists('$SHELL')
   set shell=$SHELL
 else
-  set shell=cmd.exe
+  if has('win32')
+    set shell=cmd.exe
+  else
+    set shell=/bin/sh
+  endif
 endif
+
+set mzschemedll=libracket3m_a4da80.dll
+set mzschemegcdll=libracket3m_a4da80.dll
 
 " session management
 " let g:session_directory = $VIM. '~/.vim/session'
@@ -263,10 +281,12 @@ set guioptions=
 " set guioptions-=l
 " set guioptions-=L
 
-set guifont=Consolas:h12:qPROOF:cDEFAULT
+if has('gui') && has('win32')
+  set guifont=Consolas:h12:qPROOF:cDEFAULT
 " Rendering Bug with the statusline and DirectX Renderer on Windows #1520
 " https://github.com/vim/vim/issues/1520
-set rop=type:directx,gamma:1.0,contrast:0.5,level:1,geom:1,renmode:4,taamode:1
+  set rop=type:directx,gamma:1.0,contrast:0.5,level:1,geom:1,renmode:4,taamode:1
+endif
 
 if has("gui_running")
   if has("gui_mac") || has("gui_macvim")
@@ -298,13 +318,14 @@ if &term =~ '256color'
 endif
 
 "" fix menu display not correct
-if has("win32")
+if has("win32") && has('gui')
   set helplang=en
   source $VIMRUNTIME/delmenu.vim
   set langmenu=en_US
   set ambiwidth=double
   source $VIMRUNTIME/menu.vim
-  language messages Zh_CN.utf-8
+  " language messages Zh_CN.utf-8
+  language messages en_Us
   " source $VIMRUNTIME/mswin.vim
   " behave mswin
 endif
@@ -370,9 +391,9 @@ cnoreabbrev W w
 cnoreabbrev Q q
 cnoreabbrev Qall qall
 
-cnoreabbrev <expr> cargo ((getcmdtype() == ':' && getcmdpos() <=6)? 'bot term Cargo' : 'Cargo')
+" cnoreabbrev <expr> cargo ((getcmdtype() == ':' && getcmdpos() <=6)? 'bot term Cargo' : 'Cargo')
 
-cnoreabbrev <expr> Cargo ((getcmdtype() == ':' && getcmdpos() <=6)? 'bot term Cargo' : 'Cargo')
+" cnoreabbrev <expr> Cargo ((getcmdtype() == ':' && getcmdpos() <=6)? 'bot term Cargo' : 'Cargo')
 "*****************************************************************************
 "" Mappings
 "*****************************************************************************
@@ -454,7 +475,7 @@ vnoremap // y/<c-r>"<cr>
 
 map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
-map <M-F5> :%s/\(;\s\?\\|&\)/\r/g<CR>
+" map <M-F5> :%s/\(;\s\?\\|&\)/\r/g<CR>
 
 " python keymap
 " au FileType python imap <C-F5> <esc>:w<CR> :vert :term python %<CR>
@@ -474,8 +495,10 @@ au FileType lua nmap <C-F5> :w<CR>:!lua %<CR>
 "  rust keymap
 au FileType rust imap <C-F5> <esc><CR>:call QuicklyRun()<CR>
 au FileType rust nmap <C-F5> :call QuicklyRun()<CR>
-au FileType rust imap <A-F5> <esc><CR>:call QuicklyDebug('')<CR>
-au FileType rust nmap <A-F5> :call QuicklyDebug('')<CR>
+" au FileType rust imap <C-F5> <esc>:w<CR>:AsyncRun cargo run<CR>
+" au FileType rust nmap <C-F5> :w<CR>:AsyncRun cargo run<CR>
+au FileType rust imap <F5> <esc>:call QuicklyDebug('')<CR>
+au FileType rust nmap <F5> :call QuicklyDebug('')<CR>
 command! -nargs=* CargoDebug call QuicklyDebug(<q-args>)
 
 " json
@@ -549,6 +572,15 @@ function! QuicklyDebug(args)
     else
       echom "Not find Cargo.toml"
     endif
+    " if !exists(':Termdebug')
+        " exec 'packadd termdebug'
+    " endif
+    " let l:project_name = expand('%:p:h:h:t')
+    " let l:cmd = 'TermdebugCommand ../target/debug/' . l:project_name
+    " if len(a:args) > 0
+        " let l:cmd = l:cmd . ' ' . a:args
+    " endif
+    " exec l:cmd 
   elseif &filetype == 'go'
     let l:cmd = ':GoDebugStart ' . expand('%:t')
   endif
@@ -586,6 +618,7 @@ func! QuicklyRun()
         exec "!~/.vim/markdown.pl % > %.html &"
         exec "!firefox %.html &" 
     elseif &filetype == 'rust'
+        " exec 'bot term Cargo run'
         exec 'bot term Cargo run %'
     endif
 endfunc
@@ -664,8 +697,8 @@ let g:rainbow_active=1
 "  }}}
 
 " vim-solarized8 {{{
-if has_key(g:plugs, 'vim-solarized8')
-  if has('gui') || has('nvim')
+if filereadable(expand('$MY_VIMFILES_PATH/plugged/vim-solarized8/Readme.md'))
+  if has('gui') || has('nvim') || $COLORTERM == 'truecolor'
     set background=dark
     colorschem solarized8_flat
   else
@@ -677,7 +710,7 @@ else
 endif
 
 " vim-airline-themes {{{
-" let g:airline_theme='solarized'
+let g:airline_theme='solarized'
 let g:airline_theme='dark'
 " }}}
 
@@ -796,7 +829,11 @@ let g:jedi#show_call_signatures_delay=0
 " }}}
 
 " YouComplecteMe {{{
-let g:ycm_global_ycm_extra_conf=$VIM. '/vimfiles/vim.ycm_extra_conf.py'
+let g:ycm_filetype_blacklist = {
+      \ 'lisp': 1,
+      \ 'go': 1
+      \ }
+let g:ycm_global_ycm_extra_conf=$MY_VIMFILES_PATH. '/vim.ycm_extra_conf.py'
 let g:ycm_confirm_extra_conf=0
 
 " <c-;> <c-,> etc not work, so set <m-space>
@@ -820,7 +857,7 @@ let g:ycm_semantic_triggers =  {
      \ 'cs,lua,javascript,rust': ['re!\w{2}'],
      \ }
 
-let g:ycm_rust_src_path=$HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-msvc/lib/rustlib/src/rust/src'
+let g:ycm_rust_src_path=$HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-gnu/lib/rustlib/src/rust/src'
 
 let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
@@ -830,30 +867,19 @@ let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
 nnoremap <leader>jd :YcmCompleter GoTo<CR>
 inoremap <leader>;  <C-x><C-o>
 
-function! GenYCM()
-    let l:cur_dir=getcwd()
-    cd $VIM/Vimfiles/bundle/YCM-Generator
-    :silent execute  ":!./config_gen.py ".l:cur_dir
-    if v:shell_error == 0
-        echom "Generate successfully!"
-        :YcmRestartServer
-    else
-        echom "Generate failed!"
-    endif
-    exec ":cd ". l:cur_dir
-endfunction"
-" }}}
-
 
 " slimv {{{
 " let g:slimv_leader = ',,'
+" skip auto pairs initialization for lisp to deactivat it.
+au FileType lisp let b:autopairs_loaded = 1
+au FileType lisp let b:loaded_youcompleteme = 1
 let g:slimv_menu=1
 let g:lisp_rainbow=0
 " let g:paredit_mode=0
 " let g:paredit_electric_return=0
 let g:swank_log=0 
 " let g:slimv_swank_cmd = '!start "D:/Program Files/Steel Bank Common Lisp/1.4.14/sbcl.exe" --load "D:/Program Files/Vim/vimfiles/plugged/slimv/slime/start-swank.lisp" '
-let g:slimv_swank_cmd = '!start /MIN "D:/ccl-1.11.5-windowsx86/ccl/wx86cl64.exe" -l "D:/Program Files/Vim/vimfiles/plugged/slimv/slime/start-swank.lisp" '
+" let g:slimv_swank_cmd = '!start /MIN "D:/ccl-1.11.5-windowsx86/ccl/wx86cl64.exe" -l "D:/Program Files/Vim/vimfiles/plugged/slimv/slime/start-swank.lisp" '
 let g:slimv_swank_scheme = '!start "C:/Program Files (x86)/MIT-GNU Scheme/bin/mit-scheme.exe" --band "C:\Program Files (x86)\MIT-GNU Scheme\lib\all.com" --library "C:\Program Files (x86)\MIT-GNU Scheme\lib" --load "D:\Program Files\Vim\vimfiles\plugged\slimv\slime\contrib\swank-mit-scheme.scm"'
 let g:slimv_clhs_root='file:///d:/Program\%20Files/Vim/vimfiles/HyperSpec-7-0/HyperSpec/Body/'
 " or let g:slimv_clhs_root='file:///d:/Progra~1/Vim/vimfiles/HyperSpec-7-0/HyperSpec/Body/'
@@ -885,6 +911,7 @@ let g:vim_json_syntax_conceal = 0
 " }}}
 
 " vim-go {{{
+" let g:go_debug = ['shell-commands', 'debugger-state', 'debugger-commands']
 " run :GoBuild or :GoTestCompile based on the go file
 function! s:build_go_files()
   let l:file = expand('%')
@@ -916,9 +943,9 @@ augroup go
   au FileType go nmap <Leader>i <Plug>(go-info)
   au FileType go nmap <Leader>e <Plug>(go-rename)
   au FileType go nmap <S-F5> :GoDebugStop<CR>
-  au FileType go nmap <A-F5> :call QuicklyDebug('')<CR><CR>
+  au FileType go nmap <F5> :call QuicklyDebug('')<CR><CR>
   au FileType go nmap <C-F5> :call QuicklyRun()<CR>
-  au FileType go imap <A-F5> :call QuicklyDebug('')<CR><CR>
+  au FileType go imap <F5> :call QuicklyDebug('')<CR><CR>
   au FileType go imap <C-F5> :call QuicklyRun()<CR>
 
   au Filetype go nmap <leader>gt <plug>(go-coverage-toggle)
@@ -937,7 +964,9 @@ let g:go_fmt_fail_silently = 1
 let g:go_addtags_transform = 'camelcase'
 let g:go_info_mode = 'gocode'
 let g:go_term_enabled = 1
-let $http_proxy='127.0.0.1:9527'
+let g:go_debug_log_output = ''
+" go install proxy
+" let $http_proxy='127.0.0.1:9527'
 
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
@@ -1011,9 +1040,9 @@ let g:airline#extensions#tabline#enabled = 1
 " let g:deoplete#enable_at_startup = 1
 " }}}
 " AsyncRun {{{
-augroup vimrc
-    autocmd QuickFixCmdPost * botright copen 8
-augroup END
+" augroup vimrc
+    " autocmd QuickFixCmdPost * botright copen 8
+" augroup END
 let g:asyncrun_encs='gbk'
 " noremap <F4> :call asyncrun#quickfix_toggle(8, 0)<cr>
 " }}}
