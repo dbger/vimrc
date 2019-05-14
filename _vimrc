@@ -91,7 +91,7 @@ Plug 'lifepillar/vim-solarized8'
 if has('win32')
   Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' } | Plug 'Yggdroot/indentLine'
 else
-  Plug 'Yggdroot/LeaderF', { 'do': '.\install.sh' } | Plug 'Yggdroot/indentLine'
+  Plug 'Yggdroot/LeaderF', { 'do': './install.sh' } | Plug 'Yggdroot/indentLine'
 endif
 
 " buffer manage 
