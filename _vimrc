@@ -205,8 +205,8 @@ set makeencoding=char
 set backspace=indent,eol,start
 
 "" Tabs. May be overritern by autocmd rules
-set tabstop=4
-set softtabstop=0
+set tabstop=8
+set softtabstop=4
 set shiftwidth=4
 set expandtab
 
@@ -473,7 +473,7 @@ vnoremap // y/<c-r>"<cr>
 " set softtabstop=4
 " set noexpandtab
 
-map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extras=+q .<CR>
 
 " map <M-F5> :%s/\(;\s\?\\|&\)/\r/g<CR>
 
@@ -649,6 +649,12 @@ augroup vimrc-make-cmake
   autocmd!
   autocmd FileType make setlocal noexpandtab
   autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
+augroup END
+
+"" sh/bash 
+augroup vimrc-sh-bash
+  autocmd!
+  autocmd FileType sh,shell,bash setlocal noexpandtab
 augroup END
 
 augroup tab_set
@@ -828,10 +834,16 @@ let g:jedi#show_call_signatures="1"
 let g:jedi#show_call_signatures_delay=0
 " }}}
 
+" rust config
+let $RUST_SRC_PATH=$HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-gnu/lib/rustlib/src/rust/src' 
+
+autocmd BufRead *.rs :setlocal tags=./rusty-tags.vi;/,$RUST_SRC_PATH/rusty-tags.vi
+autocmd BufWritePost *.rs :silent! exec "!rusty-tags vi --quiet --start-dir=" . expand('%:p:h') . "&" | redraw!
+
 " YouComplecteMe {{{
 let g:ycm_filetype_blacklist = {
-      \ 'lisp': 1,
-      \ 'go': 1
+      \ 'lisp': 1, 
+      \ 'go': 1,
       \ }
 let g:ycm_global_ycm_extra_conf=$MY_VIMFILES_PATH. '/vim.ycm_extra_conf.py'
 let g:ycm_confirm_extra_conf=0
@@ -908,6 +920,10 @@ let g:mkdp_path_to_chrome = 'D:\Program Files\Mozilla Firefox\firefox.exe'
 let g:vim_json_syntax_conceal = 0
 " let g:indentLine_color_gui = '#A4E57E'
 " let g:indentLine_bgcolor_gui = '#FF5F00'
+if $TERM == 'xterm'
+  let g:indentLine_bgcolor_term = 255
+  let g:indentLine_color_term = 0 
+endif
 " }}}
 
 " vim-go {{{
@@ -962,7 +978,8 @@ let g:go_list_type = 'quickfix'
 let g:go_fmt_command = 'goimports'
 let g:go_fmt_fail_silently = 1
 let g:go_addtags_transform = 'camelcase'
-let g:go_info_mode = 'gocode'
+let g:go_info_mode = 'gopls'
+let g:go_def_mode = 'gopls'
 let g:go_term_enabled = 1
 let g:go_debug_log_output = ''
 " go install proxy
@@ -1052,4 +1069,4 @@ let g:asyncrun_encs='gbk'
 "" Convenience variables
 "*****************************************************************************
 
-" vim:set ft=vim ts=2 sw=2:
+ " vim:set ft=vim ts=2 sw=2:
