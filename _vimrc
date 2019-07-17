@@ -843,7 +843,6 @@ autocmd BufWritePost *.rs :silent! exec "!rusty-tags vi --quiet --start-dir=" . 
 " YouComplecteMe {{{
 let g:ycm_filetype_blacklist = {
       \ 'lisp': 1, 
-      \ 'go': 1,
       \ }
 let g:ycm_global_ycm_extra_conf=$MY_VIMFILES_PATH. '/vim.ycm_extra_conf.py'
 let g:ycm_confirm_extra_conf=0
@@ -877,7 +876,31 @@ let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
 " let g:ycm_key_list_stop_completion = ['<C-y>', '<CR>']
 " YcmCompleter Subcommands
 nnoremap <leader>jd :YcmCompleter GoTo<CR>
-inoremap <leader>;  <C-x><C-o>
+" }}}
+
+function! Smart_TabComplete()
+  let line = getline('.')                         " current line
+
+  let substr = strpart(line, -1, col('.')+1)      " from the start of the current
+                                                  " line to one character right
+                                                  " of the cursor
+  let substr = matchstr(substr, "[^ \t]*$")       " word till cursor
+  if (strlen(substr)==0)                          " nothing to match on empty string
+    return "\<tab>"
+  endif
+  let has_period = match(substr, '\.') != -1      " position of period, if any
+  let has_slash = match(substr, '\/') != -1       " position of slash, if any
+  if (!has_period && !has_slash)
+    return "\<C-X>\<C-P>"                         " existing text matching
+  elseif ( has_slash )
+    return "\<C-X>\<C-F>"                         " file matching
+  else
+    return "\<C-X>\<C-O>"                         " plugin matching
+  endif
+endfunction
+
+inoremap <leader>,  <C-x><C-o>
+" inoremap <tab> <c-r>=Smart_TabComplete()<CR> 
 
 
 " slimv {{{
@@ -984,6 +1007,7 @@ let g:go_term_enabled = 1
 let g:go_debug_log_output = ''
 " go install proxy
 " let $http_proxy='127.0.0.1:9527'
+let $http_proxy='maomi.us:443'
 
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
@@ -1047,9 +1071,9 @@ let g:airline#extensions#tabline#enabled = 1
 " }}}
 
 " LanguageClient-newvim {{{
-" let g:LanguageClient_serverCommands = {
-    " \ 'rust': [$HOME . '/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-    " \ }
+let g:LanguageClient_serverCommands = {
+    \ 'rust': [$HOME . '/.cargo/bin/rustup', 'run', 'stable', 'ra_lsp_server'],
+    \ }
 " }}}
 
 " deoplete {{{
