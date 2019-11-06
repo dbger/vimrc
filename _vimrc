@@ -119,7 +119,7 @@ Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 
 
 " for python
-Plug 'davidhalter/jedi-vim', { 'for': 'python' }
+" Plug 'davidhalter/jedi-vim', { 'for': 'python' }
 Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
 
 " for perl
@@ -133,6 +133,8 @@ Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'iamcco/mathjax-support-for-mkdp', { 'for': 'markdown' }
 Plug 'iamcco/markdown-preview.vim', { 'for': 'markdown' }
 Plug 'dhruvasagar/vim-table-mode' |", { 'for' : 'markdown' }
+
+Plug 'neomake/neomake'
 
 " for lisp
 Plug 'kovisoft/slimv', { 'for' : ['lisp', 'scheme'] }
@@ -589,6 +591,7 @@ function! QuicklyDebug(args)
     if len(a:args) > 0
       let l:cmd = l:cmd . ' ' . a:args
     endif
+    " echomsg l:cmd
     exec l:cmd
   endif
 endfunction
@@ -613,7 +616,7 @@ func! QuicklyRun()
         exec "!firefox % &"
     elseif &filetype == 'go'
         " exec "!go build %<"
-        exec 'botright term go run %'
+        exec 'botright term go run ./'
     elseif &filetype == 'mkd' 
         exec "!~/.vim/markdown.pl % > %.html &"
         exec "!firefox %.html &" 
@@ -687,6 +690,9 @@ nmap ga <Plug>(EasyAlign)
 let g:rainbow_active=1
 " }}
 
+" gitgutter {{
+let g:gitgutter_max_signs=2048
+" }}
 " vim-racer {{{
 " set hidden
 " let g:racer_cmd = $HOME. '/.cargo/bin/racer.exe'
@@ -950,7 +956,8 @@ endif
 " }}}
 
 " vim-go {{{
-" let g:go_debug = ['shell-commands', 'debugger-state', 'debugger-commands']
+let g:go_doc_popup_window = 1
+" let g:go_debug = ['shell-commands', 'debugger-state', 'debugger-commands', 'lsp']
 " run :GoBuild or :GoTestCompile based on the go file
 function! s:build_go_files()
   let l:file = expand('%')
@@ -1007,7 +1014,8 @@ let g:go_term_enabled = 1
 let g:go_debug_log_output = ''
 " go install proxy
 " let $http_proxy='127.0.0.1:9527'
-let $http_proxy='maomi.us:443'
+let $GOPROXY='https://goproxy.io'
+" let $GO111MODULE='on'
 
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
