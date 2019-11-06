@@ -1047,7 +1047,7 @@ let g:UltiSnipsEditSplit='vertical'
 
 " vim-snippets {{{
 let g:snips_author = 'dbger'
-let g:snips_email = 'dbger At live.com'
+let g:snips_email = '3982742+dbger@users.noreply.github.com'
 let g:snips_github = 'https://github.com/dbger'
 " }}}
 
