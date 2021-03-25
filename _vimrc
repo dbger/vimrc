@@ -102,10 +102,12 @@ Plug 'jlanzarotta/bufexplorer'
 "
 Plug 'Valloric/YouCompleteMe'
 
+Plug 'puremourning/vimspector'
+
 " Enable completion where available.
 " This setting must be set before ALE is loaded
 " let g:ale_completion_enabled = 1
-Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 
@@ -120,10 +122,10 @@ Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 
 " for python
 " Plug 'davidhalter/jedi-vim', { 'for': 'python' }
-Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
+" Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
 
 " for perl
-Plug 'vim-perl/vim-perl', { 'for': 'perl'}
+" Plug 'vim-perl/vim-perl', { 'for': 'perl'}
 
 Plug 'skywind3000/asyncrun.vim',
 
@@ -150,26 +152,17 @@ Plug 'fatih/vim-go' |", { 'for': 'go' }
 
 Plug 'luochen1990/rainbow'
 
-" Plug 'prabirshrestha/asyncomplete.vim'
-" Plug 'prabirshrestha/asyncomplete-gocode.vim'
-
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
-" for rust
-" Plug 'racer-rust/vim-racer', { 'for' : 'rust' }
-"
 Plug 'rust-lang/rust.vim' |", { 'for': 'rust' }
 
 Plug 'mattn/emmet-vim'
 
-" Plug 'autozimu/LanguageClient-neovim', {'branch': 'next', 'tag': 'binary-*-x86_64-pc-windows-gnu'}
-" Plug 'maralla/completor.vim'
-
 Plug 'cespare/vim-toml' 
 
 " gdb
-Plug 'cpiger/NeoDebug'
+" Plug 'cpiger/NeoDebug'
 
 "*****************************************************************************
 "*****************************************************************************
@@ -480,31 +473,31 @@ map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extras=+q .<CR>
 " map <M-F5> :%s/\(;\s\?\\|&\)/\r/g<CR>
 
 " python keymap
-" au FileType python imap <C-F5> <esc>:w<CR> :vert :term python %<CR>
-" au FileType python nmap <C-F5> :w<CR> :vert :term python %<CR>
+au FileType python imap <C-F5> <esc>:w<CR> :vert :term python %<CR>
+au FileType python nmap <C-F5> :w<CR> :vert :term python %<CR>
 
 au FileType python inoremap <C-F5> <esc>:w<CR>:botright term python %<CR>
 au FileType python nmap <C-F5> :w<CR>:botright term python %<CR>
 
 " perl keymap
-au FileType perl imap <C-F5> <esc>:w<CR>:!perl %<CR>
-au FileType perl nmap <C-F5> <esc>:w<CR>:!perl %<CR>
+" au FileType perl imap <C-F5> <esc>:w<CR>:!perl %<CR>
+" au FileType perl nmap <C-F5> <esc>:w<CR>:!perl %<CR>
 
 " lua keymap
-au FileType lua imap <C-F5> <esc>:w<CR>:!lua %<CR>
-au FileType lua nmap <C-F5> :w<CR>:!lua %<CR>
+" au FileType lua imap <C-F5> <esc>:w<CR>:!lua %<CR>
+" au FileType lua nmap <C-F5> :w<CR>:!lua %<CR>
 
 "  rust keymap
-au FileType rust imap <C-F5> <esc><CR>:call QuicklyRun()<CR>
-au FileType rust nmap <C-F5> :call QuicklyRun()<CR>
+" au FileType rust imap <C-F5> <esc><CR>:call QuicklyRun()<CR>
+" au FileType rust nmap <C-F5> :call QuicklyRun()<CR>
 " au FileType rust imap <C-F5> <esc>:w<CR>:AsyncRun cargo run<CR>
 " au FileType rust nmap <C-F5> :w<CR>:AsyncRun cargo run<CR>
-au FileType rust imap <F5> <esc>:call QuicklyDebug('')<CR>
-au FileType rust nmap <F5> :call QuicklyDebug('')<CR>
-command! -nargs=* CargoDebug call QuicklyDebug(<q-args>)
+" au FileType rust imap <F5> <esc>:call QuicklyDebug('')<CR>
+" au FileType rust nmap <F5> :call QuicklyDebug('')<CR>
+" command! -nargs=* CargoDebug call QuicklyDebug(<q-args>)
 
 " json
-au FileType json nmap <C-F5> :w<CR>:%!python -m json.tool<CR>
+" au FileType json nmap <C-F5> :w<CR>:%!python -m json.tool<CR>
 
 " au FileType qf call AdjustWindowHeight(3, 10)
 " function! AdjustWindowHeight(minheight, maxheight)
@@ -693,20 +686,6 @@ let g:rainbow_active=1
 " gitgutter {{
 let g:gitgutter_max_signs=2048
 " }}
-" vim-racer {{{
-" set hidden
-" let g:racer_cmd = $HOME. '/.cargo/bin/racer.exe'
-" let g:racer_experimental_completer = 1
-" let $RUST_SRC_PATH = $HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-msvc/lib/rustlib/src/rust/src'
-" let $RUST_SRC_PATH = $HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-gnu/lib/rustlib/src/rust/src'
-" }}}
-
-"  completor {{{
-" let g:completor_racer_binary = $HOME. '/.cargo/bin/racer.exe'
-" let $RUST_SRC_PATH = $HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-msvc/lib/rustlib/src/rust/src'
-" let g:completor_gocode_binary = $HOME. '/go/bin/gocode.exe'
-
-"  }}}
 
 " vim-solarized8 {{{
 if filereadable(expand('$MY_VIMFILES_PATH/plugged/vim-solarized8/Readme.md'))
@@ -759,30 +738,6 @@ let g:NERDCompactSexyComs = 1
 let g:NERDMenuMode        = 0
 " }}}
 
-" pymode {{{
-let g:pymode_options_colorcolumn = 0
-let g:pymode_folding             = 0
-" fix confilct jedi-vim
-let g:pymode_rope                = 0
-let g:pymode_python              = 'python3'
-let g:pymode_breakpoint          = 1
-let g:pymode_breakpoint_bind     = '<leader>b'
-let g:pymode_run_bind            = '<leader>ry'
-
-" for ale
-"  python synax cheker
-let g:pymode_lint=0
-" don't check when saving file
-let g:pymode_lint_on_write=0
-" check when editing file
-let g:pymode_lint_on_fly=0
-let g:pymode_lint_chekers=['pyflakes', 'pep8']
-" don't open QuickFix window when finding error
-let g:pymode_lint_cwindow=0
-" don't show python-mode signs on slider bar
-let g:pymode_lint_signs=0
-" }}}
-
 " ale {{{
 " let g:ale_javascript_prettier_options = '--single-quote --trailing-comma es5'
 let g:ale_fix_on_save = 0
@@ -794,8 +749,9 @@ let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-" let g:ale_linters = {
-    " \ 'rust': ['rls',],
+let g:ale_linters = {
+    \ 'rust': ['analyzer',],
+    \ }
     " \ 'python': ['yapf', 'pylint', 'pycodestyle'],
     " \ 'go': ['gofmt', 'golint', 'govet', 'golangserver'],
     " \ }
@@ -841,7 +797,6 @@ let g:jedi#show_call_signatures_delay=0
 " }}}
 
 " rust config
-let $RUST_SRC_PATH=$HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-gnu/lib/rustlib/src/rust/src' 
 
 autocmd BufRead *.rs :setlocal tags=./rusty-tags.vi;/,$RUST_SRC_PATH/rusty-tags.vi
 autocmd BufWritePost *.rs :silent! exec "!rusty-tags vi --quiet --start-dir=" . expand('%:p:h') . "&" | redraw!
@@ -874,7 +829,9 @@ let g:ycm_semantic_triggers =  {
      \ 'cs,lua,javascript,rust': ['re!\w{2}'],
      \ }
 
-let g:ycm_rust_src_path=$HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-gnu/lib/rustlib/src/rust/src'
+" let g:ycm_rust_src_path=$HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-msvc/lib/rustlib/src/rust/src'
+
+let g:ycm_rust_toolchain_root = $HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-msvc'
 
 let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
@@ -988,11 +945,11 @@ augroup go
   au FileType go nmap <Leader>s <Plug>(go-implements)
   au FileType go nmap <Leader>i <Plug>(go-info)
   au FileType go nmap <Leader>e <Plug>(go-rename)
-  au FileType go nmap <S-F5> :GoDebugStop<CR>
-  au FileType go nmap <F5> :call QuicklyDebug('')<CR><CR>
-  au FileType go nmap <C-F5> :call QuicklyRun()<CR>
-  au FileType go imap <F5> :call QuicklyDebug('')<CR><CR>
-  au FileType go imap <C-F5> :call QuicklyRun()<CR>
+  " au FileType go nmap <S-F5> :GoDebugStop<CR>
+  " au FileType go nmap <F5> :call QuicklyDebug('')<CR><CR>
+  " au FileType go nmap <C-F5> :call QuicklyRun()<CR>
+  " au FileType go imap <F5> :call QuicklyDebug('')<CR><CR>
+  " au FileType go imap <C-F5> :call QuicklyRun()<CR>
 
   au Filetype go nmap <leader>gt <plug>(go-coverage-toggle)
   au Filetype go nmap <silent> <leader>l <plug>(go-metalinter)
@@ -1013,7 +970,7 @@ let g:go_def_mode = 'gopls'
 let g:go_term_enabled = 1
 let g:go_debug_log_output = ''
 " go install proxy
-" let $http_proxy='127.0.0.1:9527'
+" let $http_proxy='127.0.0.1:9910'
 let $GOPROXY='https://goproxy.io'
 " let $GO111MODULE='on'
 
@@ -1078,12 +1035,6 @@ endif
 let g:airline#extensions#tabline#enabled = 1
 " }}}
 
-" LanguageClient-newvim {{{
-let g:LanguageClient_serverCommands = {
-    \ 'rust': [$HOME . '/.cargo/bin/rustup', 'run', 'stable', 'ra_lsp_server'],
-    \ }
-" }}}
-
 " deoplete {{{
 " let g:python3_host_prog = 'D:/Program Files/Python37/Python.exe'
 " let g:deoplete#enable_at_startup = 1
@@ -1096,6 +1047,10 @@ let g:asyncrun_encs='gbk'
 " noremap <F4> :call asyncrun#quickfix_toggle(8, 0)<cr>
 " }}}
 
+
+" vimspector {{{
+let g:vimspector_enable_mappings='VISUAL_STUDIO'
+" }}}
 
 "*****************************************************************************
 "" Convenience variables
