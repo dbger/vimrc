@@ -43,6 +43,11 @@ let $MYVIMRC=$VIM. '/sysinit.vim'
 endif
 
 set rtp+=$MY_VIMFILES_PATH/plug.vim
+function! PlugCond(cond, ...)
+  let opts = get(a:000, 0, {})
+  return a:cond ? opts : extend(opts, { 'on': [], 'for': [] })
+endfunction
+
 "  Required: {{{
 " Specify a directory for plugins
 " - For Neovim: ~/.local/share/nvim/plugged
@@ -58,8 +63,8 @@ Plug 'junegunn/vim-easy-align'
 " Make sure you use single quotes
 
 " On-demand loading
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-Plug 'scrooloose/nerdcommenter'
+Plug 'preservim/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'preservim/nerdcommenter'
 
 " Speeddating
 Plug 'tpope/vim-speeddating', { 'for': 'org' }
@@ -94,6 +99,7 @@ else
   Plug 'Yggdroot/LeaderF', { 'do': './install.sh' } | Plug 'Yggdroot/indentLine'
 endif
 
+Plug 'ziglang/zig.vim'
 " buffer manage 
 Plug 'jlanzarotta/bufexplorer'
 
@@ -103,6 +109,10 @@ Plug 'jlanzarotta/bufexplorer'
 Plug 'Valloric/YouCompleteMe'
 
 Plug 'puremourning/vimspector'
+
+Plug 'elzr/vim-json'
+
+Plug 'chrisbra/vim-xml-runtime'
 
 " Enable completion where available.
 " This setting must be set before ALE is loaded
@@ -127,7 +137,7 @@ Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 " for perl
 " Plug 'vim-perl/vim-perl', { 'for': 'perl'}
 
-Plug 'skywind3000/asyncrun.vim',
+Plug 'skywind3000/asyncrun.vim' |  Plug 'skywind3000/asynctasks.vim'
 
 " for Markdown
 Plug 'godlygeek/tabular', { 'for': 'markdown' }
@@ -173,6 +183,9 @@ Plug 'cespare/vim-toml'
 " endif
 
 " Initialize plugin system
+" else
+  " Plug 'asvetliakov/vim-easymotion', Cond(exists('g:vscode'), { 'as': 'vsc-easymotion' })
+" endif
 call plug#end()
 " }}}
 
@@ -185,7 +198,11 @@ filetype plugin indent on
 "*****************************************************************************"
 "" Encoding
 set encoding=utf-8
-set termencoding=gbk
+if has('win32')
+  set termencoding=gbk
+else
+  set termencoding=utf-8
+endif
 set fileencoding=utf-8
 set fileencodings=ucs-bom,utf-8,cp936,gb2312,gbk,gb18030,big5,euc-jp,euc-kr,latin1
 " set binary "
@@ -194,7 +211,9 @@ set nobomb
 
 " quickfix-window output encoding
 "  neovim not surport
-set makeencoding=char
+if not has('nvim')
+  set makeencoding=char
+endif
 
 "" Fix backspace indent
 set backspace=indent,eol,start
@@ -206,7 +225,7 @@ set shiftwidth=4
 set expandtab
 
 "" Map leader to ,
-let mapleader=','
+let mapleader=' '
 
 "" Enable hidden buffers
 set hidden
@@ -250,8 +269,10 @@ else
   endif
 endif
 
-set mzschemedll=libracket3m_a4da80.dll
-set mzschemegcdll=libracket3m_a4da80.dll
+if  has('win32')
+  set mzschemedll=libracket3m_a4da80.dll
+  set mzschemegcdll=libracket3m_a4da80.dll
+endif
 
 " session management
 " let g:session_directory = $VIM. '~/.vim/session'
@@ -302,6 +323,8 @@ else
   else
     if $TERM == 'xterm'
       set term=xterm-256color
+    elseif has('termguicolors')
+      set termguicolors
     endif
   endif
   
@@ -392,6 +415,7 @@ cnoreabbrev Qall qall
 "*****************************************************************************
 "" Mappings
 "*****************************************************************************
+"" use system clipboard
 
 "" Split
 noremap <Leader>h :<C-u>split<CR>
@@ -409,6 +433,14 @@ noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 inoremap jk <esc>
 " inoremap kj <esc>
 
+noremap j gj
+noremap k gk
+if has('nvim')
+  inoremap <silent> <S-Insert> <C-R>+
+  " inoremap <silent> <S-Insert> <esc>"*gPi
+  noremap <silent> <S-Insert> "*gP<CR>
+  vmap <silent> <S-Insert> d"*gP
+endif
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 
@@ -467,6 +499,10 @@ vnoremap // y/<c-r>"<cr>
 " set tabstop=8
 " set softtabstop=4
 " set noexpandtab
+
+" xml 
+au FileType xml setlocal mps+=<:>
+au FileType xml let b:AutoPairs={'<':'>', '(': ')', '[':']', '{':'}', '"':'"', "'":"'"} 
 
 map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extras=+q .<CR>
 
@@ -689,14 +725,14 @@ let g:gitgutter_max_signs=2048
 
 " vim-solarized8 {{{
 if filereadable(expand('$MY_VIMFILES_PATH/plugged/vim-solarized8/Readme.md'))
-  if has('gui') || has('nvim') || $COLORTERM == 'truecolor'
+  if has('gui') || has('nvim') || $COLORTERM == 'truecolor' || $TERM== 'xterm-256color'
     set background=dark
-    colorschem solarized8_flat
+    colorscheme solarized8_high
   else
-    colorschem desert
+    colorscheme desert
   endif
 else
-  colorschem desert
+  colorscheme desert
   syntax on
 endif
 
@@ -751,6 +787,7 @@ let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_linters = {
     \ 'rust': ['analyzer',],
+    \ 'c':['clangd',],
     \ }
     " \ 'python': ['yapf', 'pylint', 'pycodestyle'],
     " \ 'go': ['gofmt', 'golint', 'govet', 'golangserver'],
@@ -802,6 +839,14 @@ autocmd BufRead *.rs :setlocal tags=./rusty-tags.vi;/,$RUST_SRC_PATH/rusty-tags.
 autocmd BufWritePost *.rs :silent! exec "!rusty-tags vi --quiet --start-dir=" . expand('%:p:h') . "&" | redraw!
 
 " YouComplecteMe {{{
+let g:ycm_language_server =
+  \ [
+    \{
+    \     'name': 'zls',
+    \     'filetypes': [ 'zig' ],
+    \     'cmdline': [ 'zls.exe' ]
+    \}
+  \ ]
 let g:ycm_filetype_blacklist = {
       \ 'lisp': 1, 
       \ }
@@ -823,6 +868,8 @@ let g:ycm_autoclose_preview_window_after_insertion=0
 let g:ycm_use_ultisnips_completer=0
 let g:ycm_seed_identifiers_with_syntax=1
 
+let g:ycm_auto_hover = 0
+nmap <leader>k <plug>(YCMHover)
 " https://zhuanlan.zhihu.com/p/33046090
 let g:ycm_semantic_triggers =  {
      \ 'c,cpp,python,go,java,erlang,perl': ['re!\w{2}'],
@@ -831,7 +878,11 @@ let g:ycm_semantic_triggers =  {
 
 " let g:ycm_rust_src_path=$HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-msvc/lib/rustlib/src/rust/src'
 
-let g:ycm_rust_toolchain_root = $HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-msvc'
+if has('win32')
+  let g:ycm_rust_toolchain_root = $HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-msvc'
+else
+  let g:ycm_rust_toolchain_root = $HOME. '/.rustup/toolchains/stable-x86_64-unknown-linux-gnu'
+endif
 
 let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
@@ -903,10 +954,10 @@ let g:mkdp_path_to_chrome = 'D:\Program Files\Mozilla Firefox\firefox.exe'
 "  }}}
 
 " indentLine {{{
-let g:vim_json_syntax_conceal = 0
+let g:vim_json_syntax_conceal = 1
 " let g:indentLine_color_gui = '#A4E57E'
 " let g:indentLine_bgcolor_gui = '#FF5F00'
-if $TERM == 'xterm'
+if $TERM == 'xterm' || $TERM == 'xterm-256color'
   let g:indentLine_bgcolor_term = 255
   let g:indentLine_color_term = 0 
 endif
@@ -973,6 +1024,7 @@ let g:go_debug_log_output = ''
 " let $http_proxy='127.0.0.1:9910'
 let $GOPROXY='https://goproxy.io'
 " let $GO111MODULE='on'
+" let $GO111MODULE='off'
 
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
@@ -1043,7 +1095,14 @@ let g:airline#extensions#tabline#enabled = 1
 " augroup vimrc
     " autocmd QuickFixCmdPost * botright copen 8
 " augroup END
-let g:asyncrun_encs='gbk'
+if has('win32')
+  let g:asyncrun_encs='gbk'
+else
+  let g:asyncrun_encs='utf-8'
+endif
+let g:asyncrun_open=6
+let g:asyncrun_rootmarks=['.git', '.svn', '.root', '.project', '.hg']
+let g:asynctasks_template=$VIM . '/task_template.ini'
 " noremap <F4> :call asyncrun#quickfix_toggle(8, 0)<cr>
 " }}}
 
