@@ -1,4 +1,4 @@
-" vim-bootstrap
+"let vim-bootstrap
 
 "*****************************************************************************
 "" Vim-PLug core
@@ -17,7 +17,7 @@ endif
 let vimplug_exists= expand('$MY_VIMFILES_PATH/plug.vim/autoload/plug.vim')
 
 let g:vim_bootstrap_langs = "c,go,lisp,python,rust"
-let g:vim_bootstrap_editor = "vim"				" nvim or vim
+let g:vim_bootstrap_editor = "nvim"				" nvim or vim
 
 if !filereadable(vimplug_exists)
   if !executable("curl")
@@ -39,7 +39,7 @@ if !filereadable(vimplug_exists)
 endif
 
 if has('nvim')
-let $MYVIMRC=$VIM. '/sysinit.vim'
+  let $MYVIMRC=$VIM. '/sysinit.vim'
 endif
 
 set rtp+=$MY_VIMFILES_PATH/plug.vim
@@ -54,6 +54,7 @@ endfunction
 " - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('$MY_VIMFILES_PATH/plugged')
 
+" if !exists("g:vscode")
 "*****************************************************************************
 "" Plug install packages
 "*****************************************************************************
@@ -62,9 +63,32 @@ Plug 'junegunn/vim-easy-align'
 
 " Make sure you use single quotes
 
+Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
+
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+
+Plug 'ziglang/zig.vim'
+
+" For vsnip user.
+" Plug 'hrsh7th/cmp-vsnip'
+" Plug 'hrsh7th/vim-vsnip'
+
+" For luasnip user
+" Plug 'saadparwaiz1/cmp_luasnip'
+" Plug 'L3MON4D3/LuaSnip'
+
+" For ultisnips user.
+Plug 'SirVer/ultisnips'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+
 " On-demand loading
-Plug 'preservim/nerdtree', { 'on':  'NERDTreeToggle' }
-Plug 'preservim/nerdcommenter'
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'scrooloose/nerdcommenter'
 
 " Speeddating
 Plug 'tpope/vim-speeddating', { 'for': 'org' }
@@ -92,30 +116,21 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
 " color scheme
-Plug 'lifepillar/vim-solarized8'
+" Plug 'lifepillar/vim-solarized8'
+Plug 'overcache/NeoSolarized'
+
 if has('win32')
   Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' } | Plug 'Yggdroot/indentLine'
 else
   Plug 'Yggdroot/LeaderF', { 'do': './install.sh' } | Plug 'Yggdroot/indentLine'
 endif
 
-Plug 'ziglang/zig.vim'
 " buffer manage
 Plug 'jlanzarotta/bufexplorer'
-
-" Plug 'ervandew/supertab'
-
-"
-Plug 'Valloric/YouCompleteMe'
-
-" Use release branch (recommend)
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'puremourning/vimspector'
 
 Plug 'elzr/vim-json'
-
-Plug 'chrisbra/vim-xml-runtime'
 
 " Enable completion where available.
 " This setting must be set before ALE is loaded
@@ -123,10 +138,6 @@ Plug 'chrisbra/vim-xml-runtime'
 " Plug 'dense-analysis/ale'
 
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
-
-" for python
-" Plug 'davidhalter/jedi-vim', { 'for': 'python' }
-" Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
 
 " for perl
 " Plug 'vim-perl/vim-perl', { 'for': 'perl'}
@@ -156,7 +167,7 @@ Plug 'fatih/vim-go' |", { 'for': 'go' }
 
 Plug 'luochen1990/rainbow'
 
-Plug 'SirVer/ultisnips'
+" Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 Plug 'rust-lang/rust.vim' |", { 'for': 'rust' }
@@ -166,8 +177,6 @@ Plug 'mattn/emmet-vim'
 Plug 'cespare/vim-toml'
 
 Plug 'ryanoasis/vim-devicons'
-
-"*****************************************************************************
 "*****************************************************************************
 
 "" Include user's extra bundle
@@ -185,28 +194,17 @@ call plug#end()
 " Required:
 filetype plugin indent on
 
-
 "*****************************************************************************
 "" Basic Setup
 "*****************************************************************************"
 "" Encoding
 set encoding=utf-8
-if has('win32')
-  set termencoding=gbk
-else
-  set termencoding=utf-8
-endif
+set termencoding=utf-8
 set fileencoding=utf-8
 set fileencodings=ucs-bom,utf-8,cp936,gb2312,gbk,gb18030,big5,euc-jp,euc-kr,latin1
 " set binary "
 set ttyfast
 set nobomb
-
-" quickfix-window output encoding
-"  neovim not surport
-if !has('nvim')
-  set makeencoding=char
-endif
 
 "" Fix backspace indent
 set backspace=indent,eol,start
@@ -262,10 +260,14 @@ else
   endif
 endif
 
-if  has('win32')
-  set mzschemedll=libracket3m_a4da80.dll
-  set mzschemegcdll=libracket3m_a4da80.dll
-endif
+" set mzschemedll=libracket3m_a4da80.dll
+" set mzschemegcdll=libracket3m_a4da80.dll
+
+" session management
+" let g:session_directory = $VIM. '~/.vim/session'
+" let g:session_autoload = 'no'
+" let g:session_autosave = 'no'
+" let g:session_command_aliases = 1
 
 "*****************************************************************************
 "" Visual Settings
@@ -275,21 +277,21 @@ set ruler
 set number
 set relativenumber
 
-set mousemodel=popup
+" set mousemodel=popup
 " set t_Co=256 "vim color display incorrect
-set guioptions=
+" set guioptions=
 " set guioptions-=m
 " set guioptions-=T
 " set guioptions-=r
 " set guioptions-=l
 " set guioptions-=L
 
-if has('gui') && has('win32')
-  " set guifont=Hack\ NF:h12:qPROOF:cDEFAULT
-  set guifont=Hack\ NF:h12
+if (has('gui') && has('win32')) || has('nvim')
+   " set guifont=Hack\ NF:h14
+   set guifont=FiraCode\ NF:h13
 " Rendering Bug with the statusline and DirectX Renderer on Windows #1520
 " https://github.com/vim/vim/issues/1520
-  set rop=type:directx,gamma:1.0,contrast:0.5,level:1,geom:1,renmode:4,taamode:1
+  " set rop=type:directx,gamma:1.0,contrast:0.5,level:1,geom:1,renmode:4,taamode:1
 endif
 
 if has("gui_running")
@@ -315,6 +317,7 @@ else
       set termguicolors
     endif
   endif
+
 endif
 
 
@@ -335,25 +338,9 @@ if has("win32") && has('gui')
   " behave mswin
 endif
 
-" disable preview window
-set completeopt-=preview
-" augroup completion_preview_close
-  " autocmd!
-  " if v:version > 703 || v:version == 703 && has('patch598')
-    " autocmd CompleteDone * if !&previewwindow && &completeopt =~ 'preview' | silent! pclose | endif
-  " endif
-" augroup END
-
-
-" set lines=999
-" set columns=999
-
-" set splitbelow
-" set splitright
-
 "" Disable the blinking cursor.
-set gcr=a:blinkon0
-set scrolloff=3
+" set gcr=a:blinkon0
+" set scrolloff=3
 
 "" Status bar
 set laststatus=2
@@ -370,7 +357,7 @@ set title
 set titleold="Terminal"
 set titlestring=%F
 
-set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)\
+" set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)\
 
 " Search mappings: These will make it so that going to the next one in a
 " search will center on the line it's found in.
@@ -419,9 +406,9 @@ noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
 inoremap jk <esc>
 " inoremap kj <esc>
-
 noremap j gj
 noremap k gk
+
 if has('nvim')
   inoremap <silent> <S-Insert> <C-R>+
   " inoremap <silent> <S-Insert> <esc>"*gPi
@@ -448,7 +435,7 @@ noremap <leader>x :bn<CR>
 noremap <leader>w :bn<CR>
 
 " Close buffer
-noremap <F4> :bd<CR>
+noremap <F4> :close<CR>
 
 "" Clean search (highlight)
 nnoremap <silent> <leader><space> :noh<cr>
@@ -487,15 +474,12 @@ vnoremap // y/<c-r>"<cr>
 " set softtabstop=4
 " set noexpandtab
 
-" xml
-au FileType xml setlocal mps+=<:>
-au FileType xml let b:AutoPairs={'<':'>', '(': ')', '[':']', '{':'}', '"':'"', "'":"'"}
-
 map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extras=+q .<CR>
 
 " map <M-F5> :%s/\(;\s\?\\|&\)/\r/g<CR>
 
 " python keymap
+
 au FileType python imap <C-F5> <esc>:w<CR> :vert :term python %<CR>
 au FileType python nmap <C-F5> :w<CR> :vert :term python %<CR>
 
@@ -642,21 +626,43 @@ let g:gitgutter_max_signs=2048
 " }}
 
 " vim-solarized8 {{{
-if filereadable(expand('$MY_VIMFILES_PATH/plugged/vim-solarized8/Readme.md'))
-  if has('gui') || has('nvim') || $COLORTERM == 'truecolor' || $TERM== 'xterm-256color'
-    set background=dark
-    colorscheme solarized8_high
+if filereadable(expand('$MY_VIMFILES_PATH/plugged/NeoSolarized/README.md'))
+  if has('gui') || has('nvim')
+    set termguicolors
+    colorschem NeoSolarized " colorschem desert
+    " Default value is "normal", Setting this option to "high" or "low" does use the
+    " " same Solarized palette but simply shifts some values up or down in order to
+    " " expand or compress the tonal range displayed.
+    let g:neosolarized_contrast = "normal"
+    "
+    " " Special characters such as trailing whitespace, tabs, newlines, when displayed
+    " " using ":set list" can be set to one of three levels depending on your needs.
+    " " Default value is "normal". Provide "high" and "low" options.
+    let g:neosolarized_visibility = "normal"
+    "
+    " " I make vertSplitBar a transparent background color. If you like the origin
+    " " solarized vertSplitBar style more, set this value to 0.
+    let g:neosolarized_vertSplitBgTrans = 1
+    "
+    " " If you wish to enable/disable NeoSolarized from displaying bold, underlined
+    " " or italicized" typefaces, simply assign 1 or 0 to the appropriate variable.
+    " " Default values:
+    let g:neosolarized_bold = 1
+    let g:neosolarized_underline = 1
+    let g:neosolarized_italic = 0
+    "
+    " " Used to enable/disable "bold as bright" in Neovim terminal. If colors of bold
+    " " text output by commands like `ls` aren't what you expect, you might want to
+    " " try disabling this option. Default value:
+    let g:neosolarized_termBoldAsBright = 1
   else
-    colorscheme desert
+    colorschem desert
   endif
-else
-  colorscheme desert
   syntax on
 endif
 
 " vim-airline-themes {{{
 let g:airline_theme='solarized'
-" let g:airline_theme='dark'
 " }}}
 
 " tagbar {{{
@@ -700,8 +706,8 @@ let g:ale_set_highlights = 0
 let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '⚡'
 let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
-let g:ale_echo_msg_error_str = 'E'
-let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_error_str = '✗'
+let g:ale_echo_msg_warning_str = '⚡'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_linters = {
     \ 'rust': ['analyzer',],
@@ -730,85 +736,10 @@ let g:ale_rust_cargo_check_all_targets = 1
 let g:ale_rust_rls_toolchain= 'stable'
 " }}}
 
-"" supertab {{{
-" let g:SuperTabDefaultCompletionTypeDiscovery = [
-" \ "&completefunc:<c-x><c-u>",
-" \ "&omnifunc:<c-x><c-o>",
-" \ ]
-" let g:SuperTabLongestHighlight = 1
-" }}}
-
-" fix https://github.com/davidhalter/jedi-vim/issues/870
-py3 import os; sys.executable=os.path.join(sys.prefix, 'python.exe')
-" jedi {{{
-let g:jedi#popup_on_dot=0
-let g:jedi#auto_initialization=1
-let g:jedi#completions_enabled=0
-let g:jedi#auto_vim_configuration=0
-let g:jedi#smart_auto_mappings=0
-let g:jedi#completions_command=""
-let g:jedi#show_call_signatures="1"
-let g:jedi#show_call_signatures_delay=0
-" }}}
-
 " rust config
 
 autocmd BufRead *.rs :setlocal tags=./rusty-tags.vi;/,$RUST_SRC_PATH/rusty-tags.vi
 autocmd BufWritePost *.rs :silent! exec "!rusty-tags vi --quiet --start-dir=" . expand('%:p:h') . "&" | redraw!
-
-" YouComplecteMe {{{
-let g:ycm_language_server =
-  \ [
-    \{
-    \     'name': 'zls',
-    \     'filetypes': [ 'zig' ],
-    \     'cmdline': [ 'zls.exe' ]
-    \}
-  \ ]
-let g:ycm_filetype_blacklist = {
-      \ 'lisp': 1,
-      \ }
-let g:ycm_global_ycm_extra_conf=$MY_VIMFILES_PATH. '/vim.ycm_extra_conf.py'
-let g:ycm_confirm_extra_conf=0
-
-" <c-;> <c-,> etc not work, so set <m-space>
-let g:ycm_key_invoke_completion = '<M-Space>'
-
-let g:ycm_add_preview_to_completeopt = 0
-let g:ycm_server_log_level = 'info'
-let g:ycm_min_num_identifier_candidate_chars = 2
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_complete_in_strings=1
-noremap <c-z> <NOP>
-
-let g:ycm_autoclose_preview_window_after_completion=1
-let g:ycm_autoclose_preview_window_after_insertion=0
-let g:ycm_use_ultisnips_completer=0
-let g:ycm_seed_identifiers_with_syntax=1
-
-let g:ycm_auto_hover = 0
-nmap <leader>k <plug>(YCMHover)
-" https://zhuanlan.zhihu.com/p/33046090
-let g:ycm_semantic_triggers =  {
-     \ 'c,cpp,python,go,java,erlang,perl': ['re!\w{2}'],
-     \ 'cs,lua,javascript,rust': ['re!\w{2}'],
-     \ }
-
-" let g:ycm_rust_src_path=$HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-msvc/lib/rustlib/src/rust/src'
-
-if has('win32')
-  let g:ycm_rust_toolchain_root = $HOME. '/.rustup/toolchains/stable-x86_64-pc-windows-msvc'
-else
-  let g:ycm_rust_toolchain_root = $HOME. '/.rustup/toolchains/stable-x86_64-unknown-linux-gnu'
-endif
-
-let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
-
-" let g:ycm_key_list_stop_completion = ['<C-y>', '<CR>']
-" YcmCompleter Subcommands
-nnoremap <leader>jd :YcmCompleter GoTo<CR>
-" }}}
 
 function! Smart_TabComplete()
   let line = getline('.')                         " current line
@@ -875,7 +806,7 @@ let g:mkdp_path_to_chrome = 'D:\Program Files\Mozilla Firefox\firefox.exe'
 let g:vim_json_syntax_conceal = 1
 " let g:indentLine_color_gui = '#A4E57E'
 " let g:indentLine_bgcolor_gui = '#FF5F00'
-if $TERM == 'xterm' || $TERM == 'xterm-256color'
+if $TERM == 'xterm'
   let g:indentLine_bgcolor_term = 255
   let g:indentLine_color_term = 0
 endif
@@ -914,11 +845,6 @@ augroup go
   au FileType go nmap <Leader>s <Plug>(go-implements)
   au FileType go nmap <Leader>i <Plug>(go-info)
   au FileType go nmap <Leader>e <Plug>(go-rename)
-  " au FileType go nmap <S-F5> :GoDebugStop<CR>
-  " au FileType go nmap <F5> :call QuicklyDebug('')<CR><CR>
-  " au FileType go nmap <C-F5> :call QuicklyRun()<CR>
-  " au FileType go imap <F5> :call QuicklyDebug('')<CR><CR>
-  " au FileType go imap <C-F5> :call QuicklyRun()<CR>
 
   au Filetype go nmap <leader>gt <plug>(go-coverage-toggle)
   au Filetype go nmap <silent> <leader>l <plug>(go-metalinter)
@@ -939,7 +865,7 @@ let g:go_def_mode = 'gopls'
 let g:go_term_enabled = 1
 let g:go_debug_log_output = ''
 " go install proxy
-let $http_proxy='127.0.0.1:9910'
+" let $http_proxy='127.0.0.1:9910'
 let $GOPROXY='https://goproxy.io'
 " let $GO111MODULE='on'
 " let $GO111MODULE='off'
@@ -997,25 +923,24 @@ let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
 let g:airline_skip_empty_sections = 1
-" let g:airline_left_sep = "\uE0B4"
-" let g:airline_right_sep = "\uE0B6"
+let g:airline_section_z = '%3l/%L:%3v'
+let g:airline_left_sep = "\uE0B4"
+let g:airline_right_sep = "\uE0B6"
 let g:airline#extensions#virtualenv#enabled = 1
 
 if !exists('g:airline_symbols')
-  let g:airline_symbols = {'colnr':' '}
+  " let g:airline_symbols = {'colnr' : ' '}
 endif
-let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts=1
 " }}}
 
 " AsyncRun {{{
 " augroup vimrc
     " autocmd QuickFixCmdPost * botright copen 8
 " augroup END
-if has('win32')
-  let g:asyncrun_encs='gbk'
-else
-  let g:asyncrun_encs='utf-8'
-endif
+" let g:asyncrun_encs='gbk'
+
 let g:asyncrun_open=6
 let g:asyncrun_rootmarks=['.git', '.svn', '.root', '.project', '.hg']
 let g:asynctasks_template=$VIM . '/task_template.ini'
@@ -1025,10 +950,163 @@ let g:asynctasks_template=$VIM . '/task_template.ini'
 
 " vimspector {{{
 let g:vimspector_enable_mappings='VISUAL_STUDIO'
+noremap <F12> :VimspectorShowOutput Console<cr>
+noremap <leader>de :VimspectorEval<space>
+noremap <leader>dw :VimspectorWatch<space>
+noremap <A-F12> :call vimspector#Reset({'interactive':v:true})<cr>
+
+" mnemonic 'di' = 'debug inspect' (pick your own, if you prefer!)
+
+" for normal mode - the word under the cursor
+nmap <Leader>di <Plug>VimspectorBalloonEval
+" for visual mode, the visually selected text
+xmap <Leader>di <Plug>VimspectorBalloonEval
 " }}}
 
+" Set completeopt to have a better completion experience
+set completeopt="menuone,noinsert,noselect
+
+lua << EOF
+
+  -- Add additional capabilities supported by nvim-cmp
+
+  -- Use an on_attach function to only map the following keys
+  -- after the language server attaches to the current buffer
+  local on_attach = function(client, bufnr)
+    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+    local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+    -- Enable completion triggered by <c-x><c-o>
+    buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+    -- Mappings.
+    local opts = { noremap=true, silent=true }
+
+    -- See `:help vim.lsp.*` for documentation on any of the below functions
+    buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+    buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+    buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+    buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+    buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+    buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+    buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+    buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+    buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+    buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+    buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+    buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+    buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+    buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+    buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+    buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+    buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+
+  end
+  -- Use a loop to conveniently call 'setup' on multiple servers and
+  -- map buffer local keybindings when the language server attaches
+  -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
+  local servers = { 'pyright', 'rust_analyzer', 'zls', 'clangd', 'gopls' }
+  -- Setup lspconfig
+  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  local nvim_lsp = require('lspconfig')
+  for _, lsp in ipairs(servers) do
+    nvim_lsp[lsp].setup {
+      on_attach = on_attach,
+      capabilities = capabilities,
+      flags = {
+          debounce_text_changes = 150,
+      }
+    }
+  end
+
+  -- Set completeopt to have a better completion experience
+  vim.o.completeopt='menu,menuone,noselect'
+
+  -- luasnip setup
+  -- local luasnip = require 'luasnip'
+
+  -- Setup nvim-cmp.
+  local cmp = require'cmp'
+
+  cmp.setup({
+    snippet = {
+      expand = function(args)
+        -- For `vsnip` user.
+        -- vim.fn["vsnip#anonymous"](args.body)
+
+        -- For `luasnip` user.
+        -- require('luasnip').lsp_expand(args.body)
+
+        -- For `ultisnips` user.
+        vim.fn["UltiSnips#Anon"](args.body)
+      end,
+    },
+    mapping = {
+      ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.close(),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    },
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      -- { name = 'vsnip' }, -- For vsnip users.
+      -- { name = 'luasnip' }, -- For luasnip users.
+      { name = 'ultisnips' }, -- For ultisnips users.
+      -- { name = 'snippy' }, -- For snippy users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline('/', {
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
+
+EOF
+
+"
+" " Enable completions as you type
+" let g:completion_enable_auto_popup = 1
+" let g:completion_enable_snippet = 'UltiSnips'
+let g:completion_confirm_key = "\<C-y>"
 "*****************************************************************************
 "" Convenience variables
 "*****************************************************************************
 
+" NeovIDE setting
+" let g:neovide_refresh_rate=140
+" let g:neovide_transparentcy=0.8
+" let g:neovide_no_idle=v:true
+" let g:neovide_fullscreen=v:true
+let g:neovide_remember_window_size=v:true
+" let g:neovide_input_use_logo=v:true
+" let g:neovide_cursor_animation_length=0.13
+" let g:neovide_cursor_trail_length=0.8
+" let g:neovide_cursor_antialiasing=v:true
+" let g:neovide_cursor_vfx_mode='wireframe' "pixiedust|torpedo|sonicboom|ripple|railgun|wireframe
+" let g:neovide_cursor_vfx_opacity=200.0
+" let g:neovide_cursor_vfx_particle_lifetime=1.2
+" let g:neovide_cursor_vfx_particle_density=7.0
+" let g:neovide_cursor_vfx_particle_speed=10.0
+" let g:neovide_cursor_vfx_particle_pwhase=1.5
+" let g:neovide_cursor_vfx_particle_curl=1.0
+
+map <A-CR> :let g:neovide_fullscreen=!g:neovide_fullscreen<CR>
+
+set winblend=20
+set pumblend=20
+" set shellcmdflag=/c\ chcp\ 437>nul\ &\ cmd\ /s\ /c
+"
  " vim:set ft=vim ts=2 sw=2:
